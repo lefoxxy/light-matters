@@ -105,6 +105,10 @@ public final class DarknessSystem {
         clearManagedEffects(player);
     }
 
+    public static int getPitchBlackExposureTicks(Player player) {
+        return PITCH_BLACK_EXPOSURE.getOrDefault(player.getUUID(), 0);
+    }
+
     private static void clearManagedEffects(ServerPlayer player) {
         removeEffect(player, MobEffects.DARKNESS);
         removeEffect(player, MobEffects.DIG_SLOWDOWN);
