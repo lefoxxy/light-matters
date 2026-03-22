@@ -290,14 +290,14 @@ public final class LightMattersClient {
 
     private static int getPressureColor(DarknessStage stage) {
         if (stage == DarknessStage.BRIGHT && currentProfile != null && currentProfile.canSeeSky() && currentProfile.outdoorPenalty() > 0) {
-            return 0xC9A65A;
+            return 0xFFC9A65A;
         }
 
         return switch (stage) {
-            case BRIGHT -> 0x8FB37A;
-            case GLOOM -> 0xC9A65A;
-            case DARK -> 0xC76C3F;
-            case PITCH_BLACK -> 0xB53B2F;
+            case BRIGHT -> 0xFF8FB37A;
+            case GLOOM -> 0xFFC9A65A;
+            case DARK -> 0xFFC76C3F;
+            case PITCH_BLACK -> 0xFFB53B2F;
         };
     }
 
