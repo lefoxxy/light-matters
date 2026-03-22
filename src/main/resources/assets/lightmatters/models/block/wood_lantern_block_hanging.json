@@ -1,9 +1,9 @@
 {
   "parent": "lightmatters:block/tiered_lantern_template_hanging",
   "textures": {
-    "body": "minecraft:block/sea_lantern",
-    "trim": "minecraft:block/diamond_block",
+    "body": "minecraft:block/oak_planks",
+    "trim": "minecraft:block/stripped_oak_log",
     "core": "lightmatters:block/lantern_flame_core",
-    "particle": "minecraft:block/sea_lantern"
+    "particle": "minecraft:block/oak_planks"
   }
 }

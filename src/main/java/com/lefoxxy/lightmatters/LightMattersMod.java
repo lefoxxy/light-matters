@@ -5,6 +5,7 @@ import com.lefoxxy.lightmatters.effect.PanicEffect;
 import com.lefoxxy.lightmatters.block.TieredLanternBlock;
 import com.lefoxxy.lightmatters.item.FuelLanternItem;
 import com.lefoxxy.lightmatters.item.LanternTier;
+import com.lefoxxy.lightmatters.item.SimpleTooltipItem;
 import com.lefoxxy.lightmatters.item.RecoveryConsumableItem;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
@@ -43,6 +44,8 @@ public final class LightMattersMod {
     public static final DeferredHolder<SoundEvent, SoundEvent> FATIGUE_BREATH_SOUND = SOUND_EVENTS.register(
             "fatigue_breath",
             () -> SoundEvent.createVariableRangeEvent(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MODID, "fatigue_breath")));
+    public static final DeferredBlock<LanternBlock> WOOD_LANTERN_BLOCK = BLOCKS.register("wood_lantern_block",
+            () -> new TieredLanternBlock(ParticleTypes.FLAME, ParticleTypes.SMOKE, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 10)));
     public static final DeferredBlock<LanternBlock> IRON_LANTERN_BLOCK = BLOCKS.register("iron_lantern_block",
             () -> new TieredLanternBlock(ParticleTypes.FLAME, ParticleTypes.SMOKE, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 12)));
     public static final DeferredBlock<LanternBlock> GOLD_LANTERN_BLOCK = BLOCKS.register("gold_lantern_block",
@@ -51,11 +54,17 @@ public final class LightMattersMod {
             () -> new TieredLanternBlock(ParticleTypes.END_ROD, ParticleTypes.WHITE_SMOKE, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 14)));
     public static final DeferredBlock<LanternBlock> NETHERITE_LANTERN_BLOCK = BLOCKS.register("netherite_lantern_block",
             () -> new TieredLanternBlock(ParticleTypes.SOUL_FIRE_FLAME, ParticleTypes.WHITE_ASH, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 15)));
-    public static final DeferredItem<Item> WOOD_LANTERN = ITEMS.register(LanternTier.WOOD.itemName(), () -> new FuelLanternItem(LanternTier.WOOD, Blocks.LANTERN));
+    public static final DeferredItem<Item> WOOD_LANTERN = ITEMS.register(LanternTier.WOOD.itemName(), () -> new FuelLanternItem(LanternTier.WOOD, WOOD_LANTERN_BLOCK.get()));
     public static final DeferredItem<Item> IRON_LANTERN = ITEMS.register(LanternTier.IRON.itemName(), () -> new FuelLanternItem(LanternTier.IRON, IRON_LANTERN_BLOCK.get()));
     public static final DeferredItem<Item> GOLD_LANTERN = ITEMS.register(LanternTier.GOLD.itemName(), () -> new FuelLanternItem(LanternTier.GOLD, GOLD_LANTERN_BLOCK.get()));
     public static final DeferredItem<Item> DIAMOND_LANTERN = ITEMS.register(LanternTier.DIAMOND.itemName(), () -> new FuelLanternItem(LanternTier.DIAMOND, DIAMOND_LANTERN_BLOCK.get()));
     public static final DeferredItem<Item> NETHERITE_LANTERN = ITEMS.register(LanternTier.NETHERITE.itemName(), () -> new FuelLanternItem(LanternTier.NETHERITE, NETHERITE_LANTERN_BLOCK.get()));
+    public static final DeferredItem<Item> RESIN_CLUMP = ITEMS.register(
+            "resin_clump",
+            () -> new SimpleTooltipItem(new Item.Properties().stacksTo(32), "item.lightmatters.resin_clump.tooltip"));
+    public static final DeferredItem<Item> LAMP_OIL = ITEMS.register(
+            "lamp_oil",
+            () -> new SimpleTooltipItem(new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE), "item.lightmatters.lamp_oil.tooltip"));
     public static final DeferredItem<Item> CALMING_TEA = ITEMS.register(
             "calming_tea",
             () -> new RecoveryConsumableItem(
@@ -89,9 +98,12 @@ public final class LightMattersMod {
             event.accept(GOLD_LANTERN.get());
             event.accept(DIAMOND_LANTERN.get());
             event.accept(NETHERITE_LANTERN.get());
+            event.accept(RESIN_CLUMP.get());
+            event.accept(LAMP_OIL.get());
         }
 
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+            event.accept(WOOD_LANTERN);
             event.accept(IRON_LANTERN);
             event.accept(GOLD_LANTERN);
             event.accept(DIAMOND_LANTERN);

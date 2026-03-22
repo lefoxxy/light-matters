@@ -5,13 +5,19 @@ import java.util.Map;
 import java.util.UUID;
 
 import com.lefoxxy.lightmatters.LightMattersMod;
+import com.lefoxxy.lightmatters.compat.CuriosCompat;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CampfireBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -47,9 +53,15 @@ public final class DarknessSystem {
             return;
         }
 
+        CuriosCompat.tickEquippedLanterns(serverPlayer, SAMPLE_INTERVAL_TICKS);
         DarknessProfile profile = DarknessProfile.sample(serverPlayer);
-        applyStageEffects(serverPlayer, profile.stage());
-        updateExposure(serverPlayer, profile.stage());
+        boolean safeZone = isSafeZone(serverPlayer);
+        DarknessStage adjustedStage = safeZone ? softenStage(profile.stage()) : profile.stage();
+        applyStageEffects(serverPlayer, adjustedStage);
+        updateExposure(serverPlayer, adjustedStage);
+        if (safeZone) {
+            applySafeZoneRecovery(serverPlayer);
+        }
     }
 
     @SubscribeEvent
@@ -184,6 +196,46 @@ public final class DarknessSystem {
         int next = Math.max(0, remaining - SAMPLE_INTERVAL_TICKS);
         PANIC_RECOVERY.put(playerId, next);
         applyManagedEffect(player, LightMattersMod.PANIC, 0);
+    }
+
+    private static boolean isSafeZone(ServerPlayer player) {
+        BlockPos center = player.blockPosition();
+        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-4, -2, -4), center.offset(4, 2, 4))) {
+            BlockState state = player.level().getBlockState(pos);
+            if (state.is(BlockTags.BEDS)) {
+                return true;
+            }
+
+            if (CampfireBlock.isLitCampfire(state)) {
+                return true;
+            }
+
+            if (state.is(Blocks.LANTERN)
+                    || state.is(Blocks.SOUL_LANTERN)
+                    || state.is(LightMattersMod.WOOD_LANTERN_BLOCK.get())
+                    || state.is(LightMattersMod.IRON_LANTERN_BLOCK.get())
+                    || state.is(LightMattersMod.GOLD_LANTERN_BLOCK.get())
+                    || state.is(LightMattersMod.DIAMOND_LANTERN_BLOCK.get())
+                    || state.is(LightMattersMod.NETHERITE_LANTERN_BLOCK.get())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static DarknessStage softenStage(DarknessStage stage) {
+        return switch (stage) {
+            case PITCH_BLACK -> DarknessStage.DARK;
+            case DARK -> DarknessStage.GLOOM;
+            default -> stage;
+        };
+    }
+
+    private static void applySafeZoneRecovery(ServerPlayer player) {
+        relievePitchBlackExposure(player, 60);
+        relievePanic(player, 60);
+        relieveFatigue(player, 80);
     }
 
     private static void relieveRecovery(ServerPlayer player, Map<UUID, Integer> recoveryMap, int ticks, Holder<MobEffect> effect) {

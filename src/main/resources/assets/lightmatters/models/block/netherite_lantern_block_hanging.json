@@ -3,6 +3,7 @@
   "textures": {
     "body": "minecraft:block/soul_lantern",
     "trim": "minecraft:block/netherite_block",
+    "core": "lightmatters:block/lantern_soul_core",
     "particle": "minecraft:block/soul_lantern"
   }
 }

@@ -1,6 +1,7 @@
 package com.lefoxxy.lightmatters.gameplay;
 
 import com.lefoxxy.lightmatters.LightMattersMod;
+import com.lefoxxy.lightmatters.compat.CuriosCompat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.LightLayer;
@@ -28,7 +29,9 @@ public record DarknessProfile(
         int rawSkyLight = Math.max(0, level.getBrightness(LightLayer.SKY, eyePos) - level.getSkyDarken());
         int outdoorPenalty = getOutdoorPenalty(level);
         int skyLight = Math.max(0, rawSkyLight - outdoorPenalty);
-        int personalLight = com.lefoxxy.lightmatters.item.FuelLanternItem.getHeldLanternLight(player);
+        int personalLight = Math.max(
+                com.lefoxxy.lightmatters.item.FuelLanternItem.getHeldLanternLight(player),
+                CuriosCompat.getEquippedLanternLight(player));
         int effectiveLight = Math.max(Math.max(blockLight, skyLight), personalLight);
         DarknessStage stage = DarknessStage.fromEffectiveLight(effectiveLight);
         LightSourceTier ambientTier = LightSourceTier.fromAmbientLight(effectiveLight);

@@ -1,6 +1,3 @@
 {
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "lightmatters:item/iron_lantern_lit"
-  }
+  "parent": "lightmatters:block/iron_lantern_block"
 }

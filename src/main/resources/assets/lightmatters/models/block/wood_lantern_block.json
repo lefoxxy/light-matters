@@ -1,9 +1,9 @@
 {
   "parent": "lightmatters:block/tiered_lantern_template",
   "textures": {
-    "body": "minecraft:block/lantern",
-    "trim": "minecraft:block/iron_block",
+    "body": "minecraft:block/oak_planks",
+    "trim": "minecraft:block/stripped_oak_log",
     "core": "lightmatters:block/lantern_flame_core",
-    "particle": "minecraft:block/lantern"
+    "particle": "minecraft:block/oak_planks"
   }
 }

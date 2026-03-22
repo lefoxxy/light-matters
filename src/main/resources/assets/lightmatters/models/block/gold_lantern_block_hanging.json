@@ -3,6 +3,7 @@
   "textures": {
     "body": "minecraft:block/lantern",
     "trim": "minecraft:block/gold_block",
+    "core": "lightmatters:block/lantern_flame_core",
     "particle": "minecraft:block/lantern"
   }
 }

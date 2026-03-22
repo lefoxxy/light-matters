@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "lightmatters:wood_lantern",
+    "lightmatters:iron_lantern",
+    "lightmatters:gold_lantern",
+    "lightmatters:diamond_lantern",
+    "lightmatters:netherite_lantern"
+  ]
+}

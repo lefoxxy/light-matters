@@ -2,6 +2,8 @@ package com.lefoxxy.lightmatters.item;
 
 import java.util.List;
 
+import com.lefoxxy.lightmatters.LightMattersMod;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
@@ -45,9 +47,7 @@ public final class FuelLanternItem extends BlockItem {
         if (!tier.infiniteFuel() && isFuelItem(otherHand) && getFuel(lantern) < getMaxFuel()) {
             if (!level.isClientSide()) {
                 addFuel(lantern, getFuelValue(otherHand));
-                if (!player.getAbilities().instabuild) {
-                    otherHand.shrink(1);
-                }
+                consumeFuelItem(player, otherHand);
                 player.displayClientMessage(Component.translatable("item.lightmatters.lantern.refueled", formatSeconds(getFuel(lantern) / 20)), true);
             }
             return InteractionResultHolder.sidedSuccess(lantern, level.isClientSide());
@@ -98,7 +98,17 @@ public final class FuelLanternItem extends BlockItem {
 
     @Override
     public int getBarColor(ItemStack stack) {
-        return isLit(stack) ? 0xFFB347 : 0x6B7280;
+        if (!isLit(stack)) {
+            return 0x6B7280;
+        }
+
+        return switch (tier) {
+            case WOOD -> 0xD6893B;
+            case IRON -> 0xC8CDD3;
+            case GOLD -> 0xF2C94C;
+            case DIAMOND -> 0x65D6E9;
+            case NETHERITE -> 0x5D5666;
+        };
     }
 
     @Override
@@ -118,6 +128,7 @@ public final class FuelLanternItem extends BlockItem {
         tooltipComponents.add(Component.translatable("item.lightmatters.lantern.controls"));
         if (!tier.infiniteFuel()) {
             tooltipComponents.add(Component.translatable("item.lightmatters.lantern.refuel_hint"));
+            tooltipComponents.add(Component.translatable("item.lightmatters.lantern.fuels"));
         }
     }
 
@@ -125,7 +136,7 @@ public final class FuelLanternItem extends BlockItem {
         return Math.max(getStackLight(player.getMainHandItem()), getStackLight(player.getOffhandItem()));
     }
 
-    private static int getStackLight(ItemStack stack) {
+    public static int getStackLight(ItemStack stack) {
         if (stack.getItem() instanceof FuelLanternItem lanternItem && isLit(stack) && (lanternItem.tier.infiniteFuel() || getFuel(stack) > 0)) {
             return lanternItem.tier.personalLight();
         }
@@ -138,13 +149,33 @@ public final class FuelLanternItem extends BlockItem {
     }
 
     private static boolean isFuelItem(ItemStack stack) {
-        return stack.is(Items.COAL) || stack.is(Items.CHARCOAL);
+        return stack.is(Items.COAL)
+                || stack.is(Items.CHARCOAL)
+                || stack.is(LightMattersMod.RESIN_CLUMP.get())
+                || stack.is(LightMattersMod.LAMP_OIL.get());
     }
 
     private static void extinguish(ItemStack stack, Player player) {
         setFuel(stack, 0);
         setLit(stack, false);
         player.displayClientMessage(Component.translatable("item.lightmatters.lantern.went_dark"), true);
+    }
+
+    public static void burnExternalFuel(ItemStack stack, Player player, int fuelCost) {
+        if (!(stack.getItem() instanceof FuelLanternItem lanternItem) || lanternItem.tier.infiniteFuel() || !isLit(stack)) {
+            return;
+        }
+
+        int remainingFuel = getFuel(stack);
+        if (remainingFuel <= 0) {
+            extinguish(stack, player);
+            return;
+        }
+
+        setFuel(stack, remainingFuel - fuelCost);
+        if (remainingFuel - fuelCost <= 0) {
+            extinguish(stack, player);
+        }
     }
 
     private static int getFuel(ItemStack stack) {
@@ -190,11 +221,38 @@ public final class FuelLanternItem extends BlockItem {
     }
 
     private int getFuelValue(ItemStack fuelStack) {
-        return fuelStack.is(Items.CHARCOAL) ? tier.fuelPerCoalTicks() / 2 : tier.fuelPerCoalTicks();
+        if (fuelStack.is(Items.CHARCOAL)) {
+            return tier.fuelPerCoalTicks() / 2;
+        }
+
+        if (fuelStack.is(LightMattersMod.RESIN_CLUMP.get())) {
+            return Math.round(tier.fuelPerCoalTicks() * 1.3F);
+        }
+
+        if (fuelStack.is(LightMattersMod.LAMP_OIL.get())) {
+            return Math.round(tier.fuelPerCoalTicks() * 2.0F);
+        }
+
+        return tier.fuelPerCoalTicks();
     }
 
     private int getMaxFuel() {
         return Math.max(1, tier.maxFuelTicks());
+    }
+
+    private static void consumeFuelItem(Player player, ItemStack fuelStack) {
+        if (player.getAbilities().instabuild) {
+            return;
+        }
+
+        boolean lampOil = fuelStack.is(LightMattersMod.LAMP_OIL.get());
+        fuelStack.shrink(1);
+        if (lampOil) {
+            ItemStack bottle = new ItemStack(Items.GLASS_BOTTLE);
+            if (!player.getInventory().add(bottle)) {
+                player.drop(bottle, false);
+            }
+        }
     }
 
     private static Component formatSeconds(int totalSeconds) {
