@@ -12,21 +12,29 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.InteractionResult;
 
-public final class FuelLanternItem extends Item {
+public final class FuelLanternItem extends BlockItem {
     private static final String FUEL_KEY = "FuelTicks";
     private static final String LIT_KEY = "Lit";
     private final LanternTier tier;
 
-    public FuelLanternItem(LanternTier tier) {
-        super(new Item.Properties().stacksTo(1));
+    public FuelLanternItem(LanternTier tier, Block block) {
+        super(block, new Properties().stacksTo(1));
         this.tier = tier;
+    }
+
+    @Override
+    public InteractionResult useOn(UseOnContext context) {
+        return super.useOn(context);
     }
 
     @Override

@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "lightmatters:creative_lantern_block"
+          "name": "lightmatters:creative_lantern"
         }
       ],
       "conditions": [

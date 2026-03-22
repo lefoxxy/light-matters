@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "lightmatters:netherite_lantern_block"
+          "name": "lightmatters:netherite_lantern"
         }
       ],
       "conditions": [

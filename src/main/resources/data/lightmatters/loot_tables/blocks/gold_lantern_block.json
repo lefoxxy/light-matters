@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "lightmatters:gold_lantern_block"
+          "name": "lightmatters:gold_lantern"
         }
       ],
       "conditions": [
