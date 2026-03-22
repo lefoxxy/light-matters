@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "hanging=false,waterlogged=false": {
+      "model": "lightmatters:block/creative_lantern_block"
+    },
+    "hanging=false,waterlogged=true": {
+      "model": "lightmatters:block/creative_lantern_block"
+    },
+    "hanging=true,waterlogged=false": {
+      "model": "lightmatters:block/creative_lantern_block_hanging"
+    },
+    "hanging=true,waterlogged=true": {
+      "model": "lightmatters:block/creative_lantern_block_hanging"
+    }
+  }
+}

@@ -41,6 +41,7 @@ public final class LightMattersCommands {
                         + ", block=" + profile.blockLight()
                         + ", rawSky=" + profile.rawSkyLight()
                         + ", sky=" + profile.skyLight()
+                        + ", outdoorPenalty=" + profile.outdoorPenalty()
                         + ", personal=" + profile.personalLight()
                         + ", canSeeSky=" + profile.canSeeSky()
                         + ", tier=" + profile.ambientTier().name()
