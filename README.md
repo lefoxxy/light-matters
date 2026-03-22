@@ -61,17 +61,3 @@ The compact darkness HUD is configurable from the vanilla Options screen through
 ## Development
 
 This project is built with NeoForge for Minecraft `1.21.1`.
-
-To compile the mod:
-
-```powershell
-.\gradlew.bat compileJava processResources
-```
-
-To launch the development client:
-
-```powershell
-.\gradlew.bat runClient
-```
-
-For current priorities and planned feature work, see [ROADMAP.md](/C:/Users/Kyle Lehrer/Documents/New%20project/light-matters/ROADMAP.md).
