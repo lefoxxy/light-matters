@@ -22,7 +22,11 @@ public final class DarknessSystem {
     private static final int EFFECT_REFRESH_TICKS = 60;
     private static final int SAMPLE_INTERVAL_TICKS = 20;
     private static final int PANIC_TRIGGER_TICKS = 160;
+    private static final int FATIGUE_RECOVERY_TICKS = 120;
+    private static final int PANIC_RECOVERY_TICKS = 140;
     private static final Map<UUID, Integer> PITCH_BLACK_EXPOSURE = new HashMap<>();
+    private static final Map<UUID, Integer> FATIGUE_RECOVERY = new HashMap<>();
+    private static final Map<UUID, Integer> PANIC_RECOVERY = new HashMap<>();
 
     private DarknessSystem() {
     }
@@ -64,19 +68,20 @@ public final class DarknessSystem {
     }
 
     private static void applyStageEffects(ServerPlayer player, DarknessStage stage) {
-        if (stage == DarknessStage.BRIGHT) {
-            clearManagedEffects(player);
-            return;
-        }
-
         if (stage.appliesDarknessEffect()) {
             applyManagedEffect(player, MobEffects.DARKNESS, stage.darknessAmplifier());
+        } else {
+            removeEffect(player, MobEffects.DARKNESS);
         }
 
         if (stage == DarknessStage.DARK) {
+            FATIGUE_RECOVERY.put(player.getUUID(), FATIGUE_RECOVERY_TICKS);
             applyManagedEffect(player, LightMattersMod.FATIGUE, 0);
         } else if (stage == DarknessStage.PITCH_BLACK) {
+            FATIGUE_RECOVERY.put(player.getUUID(), FATIGUE_RECOVERY_TICKS + 40);
             applyManagedEffect(player, LightMattersMod.FATIGUE, 1);
+        } else {
+            applyFatigueRecovery(player);
         }
     }
 
@@ -84,18 +89,21 @@ public final class DarknessSystem {
         UUID playerId = player.getUUID();
         if (!stage.isSevere()) {
             PITCH_BLACK_EXPOSURE.remove(playerId);
-            removeEffect(player, LightMattersMod.PANIC);
+            applyPanicRecovery(player);
             return;
         }
 
         int exposure = PITCH_BLACK_EXPOSURE.merge(playerId, SAMPLE_INTERVAL_TICKS, Integer::sum);
         if (exposure >= PANIC_TRIGGER_TICKS) {
+            PANIC_RECOVERY.put(playerId, PANIC_RECOVERY_TICKS);
             applyManagedEffect(player, LightMattersMod.PANIC, 0);
         }
     }
 
     private static void clearManagedState(ServerPlayer player) {
         PITCH_BLACK_EXPOSURE.remove(player.getUUID());
+        FATIGUE_RECOVERY.remove(player.getUUID());
+        PANIC_RECOVERY.remove(player.getUUID());
         clearManagedEffects(player);
     }
 
@@ -107,6 +115,35 @@ public final class DarknessSystem {
         removeEffect(player, MobEffects.DARKNESS);
         removeEffect(player, LightMattersMod.FATIGUE);
         removeEffect(player, LightMattersMod.PANIC);
+    }
+
+    private static void applyFatigueRecovery(ServerPlayer player) {
+        UUID playerId = player.getUUID();
+        Integer remaining = FATIGUE_RECOVERY.get(playerId);
+        if (remaining == null || remaining <= 0) {
+            FATIGUE_RECOVERY.remove(playerId);
+            removeEffect(player, LightMattersMod.FATIGUE);
+            return;
+        }
+
+        int next = Math.max(0, remaining - SAMPLE_INTERVAL_TICKS);
+        FATIGUE_RECOVERY.put(playerId, next);
+        int amplifier = remaining > 80 ? 1 : 0;
+        applyManagedEffect(player, LightMattersMod.FATIGUE, amplifier);
+    }
+
+    private static void applyPanicRecovery(ServerPlayer player) {
+        UUID playerId = player.getUUID();
+        Integer remaining = PANIC_RECOVERY.get(playerId);
+        if (remaining == null || remaining <= 0) {
+            PANIC_RECOVERY.remove(playerId);
+            removeEffect(player, LightMattersMod.PANIC);
+            return;
+        }
+
+        int next = Math.max(0, remaining - SAMPLE_INTERVAL_TICKS);
+        PANIC_RECOVERY.put(playerId, next);
+        applyManagedEffect(player, LightMattersMod.PANIC, 0);
     }
 
     private static void removeEffect(ServerPlayer player, Holder<MobEffect> effect) {

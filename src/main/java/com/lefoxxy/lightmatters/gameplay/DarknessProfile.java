@@ -32,15 +32,34 @@ public record DarknessProfile(
     }
 
     private static int getOutdoorPenalty(Level level) {
-        if (!level.dimensionType().natural()) {
+        if (!level.dimensionType().natural() || !level.dimensionType().hasSkyLight()) {
             return 0;
         }
 
         float timeOfDay = level.getTimeOfDay(1.0F);
-        float duskWeight = timeOfDay >= 0.5F && timeOfDay < 0.75F ? (timeOfDay - 0.5F) / 0.25F : 0.0F;
-        float nightWeight = timeOfDay >= 0.75F && timeOfDay <= 1.0F ? 1.0F - ((timeOfDay - 0.75F) / 0.25F) : 0.0F;
-        float penaltyWeight = Math.max(duskWeight, nightWeight);
+        float penaltyWeight = getNightWeight(timeOfDay);
 
-        return Math.round(penaltyWeight * 6.0F);
+        if (penaltyWeight <= 0.0F) {
+            return 0;
+        }
+
+        float weatherBonus = level.isThundering() ? 2.0F : level.isRaining() ? 1.0F : 0.0F;
+        return Math.round((penaltyWeight * 6.0F) + weatherBonus);
+    }
+
+    private static float getNightWeight(float timeOfDay) {
+        if (timeOfDay < 0.18F) {
+            return 1.0F - (timeOfDay / 0.18F);
+        }
+
+        if (timeOfDay < 0.5F) {
+            return 0.0F;
+        }
+
+        if (timeOfDay < 0.68F) {
+            return (timeOfDay - 0.5F) / 0.18F;
+        }
+
+        return 1.0F;
     }
 }

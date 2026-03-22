@@ -1,0 +1,22 @@
+{
+  "panic_heartbeat": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.warden.heartbeat",
+        "type": "event",
+        "volume": 0.65,
+        "pitch": 1.1
+      }
+    ]
+  },
+  "fatigue_breath": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.breath",
+        "type": "event",
+        "volume": 0.55,
+        "pitch": 0.85
+      }
+    ]
+  }
+}

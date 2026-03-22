@@ -2,6 +2,7 @@ package com.lefoxxy.lightmatters;
 
 import com.lefoxxy.lightmatters.effect.FatigueEffect;
 import com.lefoxxy.lightmatters.effect.PanicEffect;
+import com.lefoxxy.lightmatters.block.TieredLanternBlock;
 import com.lefoxxy.lightmatters.item.FuelLanternItem;
 import com.lefoxxy.lightmatters.item.LanternTier;
 import com.mojang.logging.LogUtils;
@@ -14,6 +15,7 @@ import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.effect.MobEffect;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LanternBlock;
@@ -37,8 +39,15 @@ public final class LightMattersMod {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(MODID);
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, MODID);
+    public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(Registries.SOUND_EVENT, MODID);
     public static final DeferredHolder<MobEffect, MobEffect> FATIGUE = EFFECTS.register("fatigue", FatigueEffect::new);
     public static final DeferredHolder<MobEffect, MobEffect> PANIC = EFFECTS.register("panic", PanicEffect::new);
+    public static final DeferredHolder<SoundEvent, SoundEvent> PANIC_HEARTBEAT_SOUND = SOUND_EVENTS.register(
+            "panic_heartbeat",
+            () -> SoundEvent.createVariableRangeEvent(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MODID, "panic_heartbeat")));
+    public static final DeferredHolder<SoundEvent, SoundEvent> FATIGUE_BREATH_SOUND = SOUND_EVENTS.register(
+            "fatigue_breath",
+            () -> SoundEvent.createVariableRangeEvent(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MODID, "fatigue_breath")));
     public static final DeferredBlock<TorchBlock> WOOD_TORCH_BLOCK = BLOCKS.register("wood_torch",
             () -> new TorchBlock(ParticleTypes.FLAME, BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
@@ -57,15 +66,15 @@ public final class LightMattersMod {
                     .dropsLike(WOOD_TORCH_BLOCK.get())
                     .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY)));
     public static final DeferredBlock<LanternBlock> IRON_LANTERN_BLOCK = BLOCKS.register("iron_lantern_block",
-            () -> new LanternBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 12)));
+            () -> new TieredLanternBlock(ParticleTypes.FLAME, ParticleTypes.SMOKE, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 12)));
     public static final DeferredBlock<LanternBlock> GOLD_LANTERN_BLOCK = BLOCKS.register("gold_lantern_block",
-            () -> new LanternBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 13)));
+            () -> new TieredLanternBlock(ParticleTypes.FLAME, ParticleTypes.WAX_ON, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 13)));
     public static final DeferredBlock<LanternBlock> DIAMOND_LANTERN_BLOCK = BLOCKS.register("diamond_lantern_block",
-            () -> new LanternBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 14)));
+            () -> new TieredLanternBlock(ParticleTypes.END_ROD, ParticleTypes.WHITE_SMOKE, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 14)));
     public static final DeferredBlock<LanternBlock> NETHERITE_LANTERN_BLOCK = BLOCKS.register("netherite_lantern_block",
-            () -> new LanternBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 15)));
+            () -> new TieredLanternBlock(ParticleTypes.SOUL_FIRE_FLAME, ParticleTypes.WHITE_ASH, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 15)));
     public static final DeferredBlock<LanternBlock> CREATIVE_LANTERN_BLOCK = BLOCKS.register("creative_lantern_block",
-            () -> new LanternBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 15)));
+            () -> new TieredLanternBlock(ParticleTypes.END_ROD, ParticleTypes.ELECTRIC_SPARK, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 15)));
     public static final DeferredItem<Item> WOOD_TORCH = ITEMS.register("wood_torch",
             () -> new StandingAndWallBlockItem(WOOD_TORCH_BLOCK.get(), WOOD_WALL_TORCH_BLOCK.get(), new Item.Properties(), Direction.DOWN));
     public static final DeferredItem<Item> WOOD_LANTERN = ITEMS.register(LanternTier.WOOD.itemName(), () -> new FuelLanternItem(LanternTier.WOOD, Blocks.LANTERN));
@@ -77,6 +86,7 @@ public final class LightMattersMod {
 
     public LightMattersMod(IEventBus modEventBus) {
         EFFECTS.register(modEventBus);
+        SOUND_EVENTS.register(modEventBus);
         BLOCKS.register(modEventBus);
         ITEMS.register(modEventBus);
         modEventBus.addListener(this::addCreativeTabItems);
