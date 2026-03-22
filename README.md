@@ -25,14 +25,34 @@ All survival lanterns can be toggled on and off, consume fuel while carried and 
 
 ## World Lighting
 
-- `Wood Torch`: a weaker early-game placed light for basic survival.
+- Vanilla torches still help, but their useful protection is intentionally weaker so lanterns become the better long-term lighting investment.
 - `Iron`, `Gold`, `Diamond`, `Netherite`, and `Creative` lanterns can all be placed directly into the world.
 - Better lantern tiers create stronger placed light, so base-building and cave routes improve alongside carried-light progression.
 - Placed lantern blocks do not consume fuel; fuel only matters while the lantern is carried as an item.
 - Placed lantern tiers now also differentiate through particles and ambience, while keeping close to Minecraft-style lantern visuals.
 
-## Next Good Steps
+## Recommended Roadmap
 
-- Expand world-light progression with more fuel-aware placed lights, braziers, or camp lamps.
-- Balance outdoor darkness across weather, dawn, dusk, moonlight, and dimension-specific rules.
-- Give `Panic` and `Fatigue` even more mechanical depth, such as recovery items, safe-zone bonuses, or interaction penalties.
+### Survival Systems
+
+- Add recovery items and safe-zone mechanics for `Panic` and `Fatigue`, such as tea, campfires, bedrolls, or lit shelters.
+- Add darkness-specific interaction penalties like reduced bow steadiness, slower tool handling, or more fragile combat timing.
+- Introduce player adaptation or resistance progression so prepared players can push deeper into darkness.
+
+### Light Progression
+
+- Expand placed-light progression with braziers, oil lamps, miner lamps, camp lanterns, and permanent base lights.
+- Add more meaningful fuel types with tradeoffs, such as oil, resin, coal bricks, and rare long-burn fuels.
+- Make lantern tiers visually and mechanically distinct through sound, particles, durability of placement, and special perks.
+
+### World Balance
+
+- Keep tuning outdoor darkness across weather, dawn, dusk, moonlight, biome exposure, and dimension-specific rules.
+- Give caves, forests, storms, and the Deep Dark more distinct darkness behavior so different places feel different, not just darker.
+- Add mob or world interactions that respond to light quality, not only brightness level.
+
+### Atmosphere And UX
+
+- Add stronger custom sounds, heartbeat layers, breathing variations, lantern hums, and extinguish/refuel feedback.
+- Add a clearer HUD or status meter for darkness pressure, recovery, and current light safety.
+- Add config options for thresholds, accessibility, and effect intensity so balancing is easier.

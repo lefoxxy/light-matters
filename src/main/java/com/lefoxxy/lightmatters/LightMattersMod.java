@@ -9,21 +9,14 @@ import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
 import net.minecraft.core.registries.Registries;
-import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.LanternBlock;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.TorchBlock;
-import net.minecraft.world.level.block.WallTorchBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -48,23 +41,6 @@ public final class LightMattersMod {
     public static final DeferredHolder<SoundEvent, SoundEvent> FATIGUE_BREATH_SOUND = SOUND_EVENTS.register(
             "fatigue_breath",
             () -> SoundEvent.createVariableRangeEvent(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MODID, "fatigue_breath")));
-    public static final DeferredBlock<TorchBlock> WOOD_TORCH_BLOCK = BLOCKS.register("wood_torch",
-            () -> new TorchBlock(ParticleTypes.FLAME, BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.WOOD)
-                    .noCollission()
-                    .instabreak()
-                    .lightLevel(state -> 10)
-                    .sound(SoundType.WOOD)
-                    .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY)));
-    public static final DeferredBlock<WallTorchBlock> WOOD_WALL_TORCH_BLOCK = BLOCKS.register("wood_wall_torch",
-            () -> new WallTorchBlock(ParticleTypes.FLAME, BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.WOOD)
-                    .noCollission()
-                    .instabreak()
-                    .lightLevel(state -> 10)
-                    .sound(SoundType.WOOD)
-                    .dropsLike(WOOD_TORCH_BLOCK.get())
-                    .pushReaction(net.minecraft.world.level.material.PushReaction.DESTROY)));
     public static final DeferredBlock<LanternBlock> IRON_LANTERN_BLOCK = BLOCKS.register("iron_lantern_block",
             () -> new TieredLanternBlock(ParticleTypes.FLAME, ParticleTypes.SMOKE, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 12)));
     public static final DeferredBlock<LanternBlock> GOLD_LANTERN_BLOCK = BLOCKS.register("gold_lantern_block",
@@ -75,8 +51,6 @@ public final class LightMattersMod {
             () -> new TieredLanternBlock(ParticleTypes.SOUL_FIRE_FLAME, ParticleTypes.WHITE_ASH, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 15)));
     public static final DeferredBlock<LanternBlock> CREATIVE_LANTERN_BLOCK = BLOCKS.register("creative_lantern_block",
             () -> new TieredLanternBlock(ParticleTypes.END_ROD, ParticleTypes.ELECTRIC_SPARK, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 15)));
-    public static final DeferredItem<Item> WOOD_TORCH = ITEMS.register("wood_torch",
-            () -> new StandingAndWallBlockItem(WOOD_TORCH_BLOCK.get(), WOOD_WALL_TORCH_BLOCK.get(), new Item.Properties(), Direction.DOWN));
     public static final DeferredItem<Item> WOOD_LANTERN = ITEMS.register(LanternTier.WOOD.itemName(), () -> new FuelLanternItem(LanternTier.WOOD, Blocks.LANTERN));
     public static final DeferredItem<Item> IRON_LANTERN = ITEMS.register(LanternTier.IRON.itemName(), () -> new FuelLanternItem(LanternTier.IRON, IRON_LANTERN_BLOCK.get()));
     public static final DeferredItem<Item> GOLD_LANTERN = ITEMS.register(LanternTier.GOLD.itemName(), () -> new FuelLanternItem(LanternTier.GOLD, GOLD_LANTERN_BLOCK.get()));
@@ -104,7 +78,6 @@ public final class LightMattersMod {
         }
 
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
-            event.accept(WOOD_TORCH);
             event.accept(IRON_LANTERN);
             event.accept(GOLD_LANTERN);
             event.accept(DIAMOND_LANTERN);
