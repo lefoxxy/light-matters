@@ -34,7 +34,7 @@ public final class FuelLanternItem extends Item {
         ItemStack lantern = player.getItemInHand(usedHand);
         ItemStack otherHand = player.getItemInHand(usedHand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND);
 
-        if (isFuelItem(otherHand) && getFuel(lantern) < getMaxFuel()) {
+        if (!tier.infiniteFuel() && isFuelItem(otherHand) && getFuel(lantern) < getMaxFuel()) {
             if (!level.isClientSide()) {
                 addFuel(lantern, getFuelValue(otherHand));
                 if (!player.getAbilities().instabuild) {
@@ -45,7 +45,7 @@ public final class FuelLanternItem extends Item {
             return InteractionResultHolder.sidedSuccess(lantern, level.isClientSide());
         }
 
-        if (getFuel(lantern) <= 0) {
+        if (!tier.infiniteFuel() && getFuel(lantern) <= 0) {
             if (!level.isClientSide()) {
                 player.displayClientMessage(Component.translatable("item.lightmatters.lantern.empty"), true);
             }
@@ -62,7 +62,7 @@ public final class FuelLanternItem extends Item {
 
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
-        if (level.isClientSide() || !(entity instanceof Player player) || !isLit(stack) || !isHeld(player, slotId, isSelected)) {
+        if (level.isClientSide() || tier.infiniteFuel() || !(entity instanceof Player player) || !isLit(stack) || !isHeld(player, slotId, isSelected)) {
             return;
         }
 
@@ -80,7 +80,7 @@ public final class FuelLanternItem extends Item {
 
     @Override
     public boolean isBarVisible(ItemStack stack) {
-        return getFuel(stack) > 0;
+        return !tier.infiniteFuel() && getFuel(stack) > 0;
     }
 
     @Override
@@ -98,13 +98,19 @@ public final class FuelLanternItem extends Item {
         int fuelTicks = getFuel(stack);
         tooltipComponents.add(Component.translatable("item.lightmatters.lantern.tier", Component.literal(tier.displayName()).withStyle(tier.nameColor())));
         tooltipComponents.add(Component.translatable("item.lightmatters.lantern.brightness", tier.personalLight()));
-        tooltipComponents.add(Component.translatable("item.lightmatters.lantern.efficiency", formatSeconds(tier.fuelSecondsPerCoal())));
+        tooltipComponents.add(tier.infiniteFuel()
+                ? Component.translatable("item.lightmatters.lantern.efficiency_infinite")
+                : Component.translatable("item.lightmatters.lantern.efficiency", formatSeconds(tier.fuelSecondsPerCoal())));
         tooltipComponents.add(Component.translatable("item.lightmatters.lantern.status", isLit(stack)
                 ? Component.translatable("item.lightmatters.lantern.state.lit").withStyle(ChatFormatting.GOLD)
                 : Component.translatable("item.lightmatters.lantern.state.unlit").withStyle(ChatFormatting.GRAY)));
-        tooltipComponents.add(Component.translatable("item.lightmatters.lantern.fuel", formatSeconds(fuelTicks / 20)));
+        tooltipComponents.add(tier.infiniteFuel()
+                ? Component.translatable("item.lightmatters.lantern.fuel_infinite")
+                : Component.translatable("item.lightmatters.lantern.fuel", formatSeconds(fuelTicks / 20)));
         tooltipComponents.add(Component.translatable("item.lightmatters.lantern.controls"));
-        tooltipComponents.add(Component.translatable("item.lightmatters.lantern.refuel_hint"));
+        if (!tier.infiniteFuel()) {
+            tooltipComponents.add(Component.translatable("item.lightmatters.lantern.refuel_hint"));
+        }
     }
 
     public static int getHeldLanternLight(Player player) {
@@ -112,7 +118,7 @@ public final class FuelLanternItem extends Item {
     }
 
     private static int getStackLight(ItemStack stack) {
-        if (stack.getItem() instanceof FuelLanternItem lanternItem && isLit(stack) && getFuel(stack) > 0) {
+        if (stack.getItem() instanceof FuelLanternItem lanternItem && isLit(stack) && (lanternItem.tier.infiniteFuel() || getFuel(stack) > 0)) {
             return lanternItem.tier.personalLight();
         }
 
@@ -140,6 +146,10 @@ public final class FuelLanternItem extends Item {
 
     private static void setFuel(ItemStack stack, int fuelTicks) {
         if (!(stack.getItem() instanceof FuelLanternItem lanternItem)) {
+            return;
+        }
+
+        if (lanternItem.tier.infiniteFuel()) {
             return;
         }
 
@@ -176,7 +186,7 @@ public final class FuelLanternItem extends Item {
     }
 
     private int getMaxFuel() {
-        return tier.maxFuelTicks();
+        return Math.max(1, tier.maxFuelTicks());
     }
 
     private static Component formatSeconds(int totalSeconds) {

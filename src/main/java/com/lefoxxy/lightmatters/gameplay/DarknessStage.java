@@ -47,15 +47,15 @@ public enum DarknessStage {
     }
 
     public static DarknessStage fromEffectiveLight(int effectiveLight) {
-        if (effectiveLight >= 8) {
+        if (effectiveLight >= 10) {
             return BRIGHT;
         }
 
-        if (effectiveLight >= 5) {
+        if (effectiveLight >= 6) {
             return GLOOM;
         }
 
-        if (effectiveLight >= 2) {
+        if (effectiveLight >= 3) {
             return DARK;
         }
 

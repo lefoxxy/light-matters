@@ -23,6 +23,7 @@ public final class LightMattersMod {
     public static final DeferredItem<Item> GOLD_LANTERN = ITEMS.register(LanternTier.GOLD.itemName(), () -> new FuelLanternItem(LanternTier.GOLD));
     public static final DeferredItem<Item> DIAMOND_LANTERN = ITEMS.register(LanternTier.DIAMOND.itemName(), () -> new FuelLanternItem(LanternTier.DIAMOND));
     public static final DeferredItem<Item> NETHERITE_LANTERN = ITEMS.register(LanternTier.NETHERITE.itemName(), () -> new FuelLanternItem(LanternTier.NETHERITE));
+    public static final DeferredItem<Item> CREATIVE_LANTERN = ITEMS.register(LanternTier.CREATIVE.itemName(), () -> new FuelLanternItem(LanternTier.CREATIVE));
 
     public LightMattersMod(IEventBus modEventBus) {
         ITEMS.register(modEventBus);
@@ -37,6 +38,7 @@ public final class LightMattersMod {
             event.accept(GOLD_LANTERN.get());
             event.accept(DIAMOND_LANTERN.get());
             event.accept(NETHERITE_LANTERN.get());
+            event.accept(CREATIVE_LANTERN.get());
         }
     }
 }

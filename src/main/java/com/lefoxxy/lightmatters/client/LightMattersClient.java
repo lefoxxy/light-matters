@@ -32,6 +32,7 @@ public final class LightMattersClient {
             registerLanternProperty(LightMattersMod.GOLD_LANTERN.get());
             registerLanternProperty(LightMattersMod.DIAMOND_LANTERN.get());
             registerLanternProperty(LightMattersMod.NETHERITE_LANTERN.get());
+            registerLanternProperty(LightMattersMod.CREATIVE_LANTERN.get());
         });
     }
 

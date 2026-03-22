@@ -39,6 +39,7 @@ public final class LightMattersCommands {
                 "Light Matters debug | stage=" + profile.stage().name()
                         + ", effective=" + profile.effectiveLight()
                         + ", block=" + profile.blockLight()
+                        + ", rawSky=" + profile.rawSkyLight()
                         + ", sky=" + profile.skyLight()
                         + ", personal=" + profile.personalLight()
                         + ", canSeeSky=" + profile.canSeeSky()
