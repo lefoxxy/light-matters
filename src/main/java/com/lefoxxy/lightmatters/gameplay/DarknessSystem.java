@@ -70,17 +70,13 @@ public final class DarknessSystem {
         }
 
         if (stage.appliesDarknessEffect()) {
-            applyHiddenEffect(player, MobEffects.DARKNESS, stage.darknessAmplifier());
+            applyManagedEffect(player, MobEffects.DARKNESS, stage.darknessAmplifier());
         }
 
         if (stage == DarknessStage.DARK) {
-            applyHiddenEffect(player, MobEffects.DIG_SLOWDOWN, 0);
+            applyManagedEffect(player, LightMattersMod.FATIGUE, 0);
         } else if (stage == DarknessStage.PITCH_BLACK) {
-            applyHiddenEffect(player, MobEffects.DIG_SLOWDOWN, 1);
-        }
-
-        if (stage.appliesWeakness()) {
-            applyHiddenEffect(player, MobEffects.WEAKNESS, stage.weaknessAmplifier());
+            applyManagedEffect(player, LightMattersMod.FATIGUE, 1);
         }
     }
 
@@ -88,15 +84,13 @@ public final class DarknessSystem {
         UUID playerId = player.getUUID();
         if (!stage.isSevere()) {
             PITCH_BLACK_EXPOSURE.remove(playerId);
-            removeEffect(player, MobEffects.MOVEMENT_SLOWDOWN);
-            removeEffect(player, MobEffects.CONFUSION);
+            removeEffect(player, LightMattersMod.PANIC);
             return;
         }
 
         int exposure = PITCH_BLACK_EXPOSURE.merge(playerId, SAMPLE_INTERVAL_TICKS, Integer::sum);
         if (exposure >= PANIC_TRIGGER_TICKS) {
-            applyHiddenEffect(player, MobEffects.MOVEMENT_SLOWDOWN, 0);
-            applyHiddenEffect(player, MobEffects.CONFUSION, 0);
+            applyManagedEffect(player, LightMattersMod.PANIC, 0);
         }
     }
 
@@ -111,10 +105,8 @@ public final class DarknessSystem {
 
     private static void clearManagedEffects(ServerPlayer player) {
         removeEffect(player, MobEffects.DARKNESS);
-        removeEffect(player, MobEffects.DIG_SLOWDOWN);
-        removeEffect(player, MobEffects.WEAKNESS);
-        removeEffect(player, MobEffects.MOVEMENT_SLOWDOWN);
-        removeEffect(player, MobEffects.CONFUSION);
+        removeEffect(player, LightMattersMod.FATIGUE);
+        removeEffect(player, LightMattersMod.PANIC);
     }
 
     private static void removeEffect(ServerPlayer player, Holder<MobEffect> effect) {
@@ -123,8 +115,8 @@ public final class DarknessSystem {
         }
     }
 
-    private static void applyHiddenEffect(ServerPlayer player, Holder<MobEffect> effect, int amplifier) {
-        MobEffectInstance instance = new MobEffectInstance(effect, EFFECT_REFRESH_TICKS, amplifier, true, false, false);
+    private static void applyManagedEffect(ServerPlayer player, Holder<MobEffect> effect, int amplifier) {
+        MobEffectInstance instance = new MobEffectInstance(effect, EFFECT_REFRESH_TICKS, amplifier, false, false, true);
         player.addEffect(instance);
     }
 }

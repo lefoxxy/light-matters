@@ -21,5 +21,7 @@
   "item.lightmatters.lantern.lit": "Lantern lit.",
   "item.lightmatters.lantern.unlit": "Lantern extinguished.",
   "item.lightmatters.lantern.empty": "The lantern is out of fuel.",
-  "item.lightmatters.lantern.went_dark": "Your lantern sputters out."
+  "item.lightmatters.lantern.went_dark": "Your lantern sputters out.",
+  "effect.lightmatters.fatigue": "Fatigue",
+  "effect.lightmatters.panic": "Panic"
 }

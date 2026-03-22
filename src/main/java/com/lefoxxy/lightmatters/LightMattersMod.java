@@ -1,14 +1,19 @@
 package com.lefoxxy.lightmatters;
 
+import com.lefoxxy.lightmatters.effect.FatigueEffect;
+import com.lefoxxy.lightmatters.effect.PanicEffect;
 import com.lefoxxy.lightmatters.item.FuelLanternItem;
 import com.lefoxxy.lightmatters.item.LanternTier;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.effect.MobEffect;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.fml.common.Mod;
@@ -18,6 +23,9 @@ public final class LightMattersMod {
     public static final String MODID = "lightmatters";
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
+    public static final DeferredRegister<MobEffect> EFFECTS = DeferredRegister.create(Registries.MOB_EFFECT, MODID);
+    public static final DeferredHolder<MobEffect, MobEffect> FATIGUE = EFFECTS.register("fatigue", FatigueEffect::new);
+    public static final DeferredHolder<MobEffect, MobEffect> PANIC = EFFECTS.register("panic", PanicEffect::new);
     public static final DeferredItem<Item> WOOD_LANTERN = ITEMS.register(LanternTier.WOOD.itemName(), () -> new FuelLanternItem(LanternTier.WOOD));
     public static final DeferredItem<Item> IRON_LANTERN = ITEMS.register(LanternTier.IRON.itemName(), () -> new FuelLanternItem(LanternTier.IRON));
     public static final DeferredItem<Item> GOLD_LANTERN = ITEMS.register(LanternTier.GOLD.itemName(), () -> new FuelLanternItem(LanternTier.GOLD));
@@ -26,6 +34,7 @@ public final class LightMattersMod {
     public static final DeferredItem<Item> CREATIVE_LANTERN = ITEMS.register(LanternTier.CREATIVE.itemName(), () -> new FuelLanternItem(LanternTier.CREATIVE));
 
     public LightMattersMod(IEventBus modEventBus) {
+        EFFECTS.register(modEventBus);
         ITEMS.register(modEventBus);
         modEventBus.addListener(this::addCreativeTabItems);
         LOGGER.info("Light Matters is loaded. Darkness now matters.");
