@@ -6,9 +6,8 @@
 
 - Darkness is sampled from block light, reduced skylight, and personal lantern light around the player.
 - Outdoor darkness matters more now, especially at night and during rain, so torches and placed lighting stay relevant above ground.
-- Low light applies vision pressure and slows mining.
-- Deeper darkness adds combat unreliability through weakness.
-- Prolonged pitch-black exposure causes panic-style slowness and nausea.
+- Low light applies vision pressure and the custom `Fatigue` effect.
+- Prolonged pitch-black exposure builds into the custom `Panic` effect.
 - A client HUD vignette deepens as ambient light gets worse.
 - `/lightmatters debug` reports live block, skylight, personal light, and exposure values.
 
@@ -25,7 +24,7 @@ All survival lanterns can be toggled on and off, consume fuel while lit, and can
 
 ## Next Good Steps
 
-- Add real custom panic and fatigue effects instead of relying on vanilla potion effects.
 - Add torch and placed-light progression so world lighting supports the same survival loop as carried lanterns.
 - Add custom sounds, particles, and stronger visual differentiation between lantern tiers.
+- Give `Panic` and `Fatigue` more bespoke gameplay hooks beyond attribute modifiers, such as aim sway, heartbeat, or recovery windows.
 - Balance outdoor skylight penalties across weather, dawn, dusk, and dimension-specific rules.
