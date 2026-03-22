@@ -5,6 +5,7 @@ import com.lefoxxy.lightmatters.effect.PanicEffect;
 import com.lefoxxy.lightmatters.block.TieredLanternBlock;
 import com.lefoxxy.lightmatters.item.FuelLanternItem;
 import com.lefoxxy.lightmatters.item.LanternTier;
+import com.lefoxxy.lightmatters.item.RecoveryConsumableItem;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 
@@ -12,6 +13,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.level.block.Blocks;
@@ -57,6 +59,22 @@ public final class LightMattersMod {
     public static final DeferredItem<Item> DIAMOND_LANTERN = ITEMS.register(LanternTier.DIAMOND.itemName(), () -> new FuelLanternItem(LanternTier.DIAMOND, DIAMOND_LANTERN_BLOCK.get()));
     public static final DeferredItem<Item> NETHERITE_LANTERN = ITEMS.register(LanternTier.NETHERITE.itemName(), () -> new FuelLanternItem(LanternTier.NETHERITE, NETHERITE_LANTERN_BLOCK.get()));
     public static final DeferredItem<Item> CREATIVE_LANTERN = ITEMS.register(LanternTier.CREATIVE.itemName(), () -> new FuelLanternItem(LanternTier.CREATIVE, CREATIVE_LANTERN_BLOCK.get()));
+    public static final DeferredItem<Item> CALMING_TEA = ITEMS.register(
+            "calming_tea",
+            () -> new RecoveryConsumableItem(
+                    new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE),
+                    160,
+                    200,
+                    40,
+                    "item.lightmatters.calming_tea.tooltip"));
+    public static final DeferredItem<Item> MINERS_TONIC = ITEMS.register(
+            "miners_tonic",
+            () -> new RecoveryConsumableItem(
+                    new Item.Properties().stacksTo(16).craftRemainder(Items.GLASS_BOTTLE),
+                    80,
+                    40,
+                    200,
+                    "item.lightmatters.miners_tonic.tooltip"));
 
     public LightMattersMod(IEventBus modEventBus) {
         EFFECTS.register(modEventBus);
@@ -83,6 +101,11 @@ public final class LightMattersMod {
             event.accept(DIAMOND_LANTERN);
             event.accept(NETHERITE_LANTERN);
             event.accept(CREATIVE_LANTERN);
+        }
+
+        if (event.getTabKey() == CreativeModeTabs.FOOD_AND_DRINKS) {
+            event.accept(CALMING_TEA);
+            event.accept(MINERS_TONIC);
         }
     }
 }

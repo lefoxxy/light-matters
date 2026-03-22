@@ -16,8 +16,10 @@ The current prototype focuses on three core ideas:
 - Outdoor darkness builds gradually at sunset, remains threatening through the night, fades at dawn, and intensifies during bad weather.
 - Low light applies visual pressure and the custom `Fatigue` effect.
 - Extended pitch-black exposure builds into the custom `Panic` effect with lingering recovery behavior.
+- Recovery consumables now give players active counterplay through `Calming Tea` and `Miner's Tonic`.
 - `Panic` and `Fatigue` include custom feedback such as heartbeat and breathing cues, particles, and camera pressure.
-- A client-side vignette reinforces worsening ambient light conditions.
+- A client-side vignette and compact darkness meter reinforce worsening ambient light conditions.
+- The HUD can be disabled, resized, and repositioned from the in-game options menu.
 - `/lightmatters debug` reports live values for block light, raw skylight, outdoor penalty, personal light, and exposure.
 
 ## Lantern System
@@ -39,6 +41,23 @@ Higher lantern tiers provide stronger personal light and better efficiency, maki
 
 Vanilla torches still provide useful protection, but their effective coverage is intentionally weaker than lanterns so that lantern progression remains a meaningful upgrade path. Stronger lantern tiers also improve world lighting for shelters, caves, and travel routes by placing more dependable light sources into the environment.
 
+## Recovery Items
+
+- `Calming Tea` reduces pitch-black exposure and helps settle panic.
+- `Miner's Tonic` shortens fatigue recovery and restores focus during longer expeditions.
+
+These items are meant to add player-controlled recovery tools without replacing the need for reliable light.
+
+## HUD Options
+
+The compact darkness HUD is configurable from the vanilla Options screen through the `Light Matters HUD` button.
+
+- Enable or disable the HUD entirely.
+- Resize it.
+- Move it to any screen corner.
+- Adjust horizontal and vertical offset.
+- Reset to the default layout.
+
 ## Development
 
 This project is built with NeoForge for Minecraft `1.21.1`.
@@ -54,3 +73,5 @@ To launch the development client:
 ```powershell
 .\gradlew.bat runClient
 ```
+
+For current priorities and planned feature work, see [ROADMAP.md](/C:/Users/Kyle Lehrer/Documents/New%20project/light-matters/ROADMAP.md).

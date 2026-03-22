@@ -111,6 +111,46 @@ public final class DarknessSystem {
         return PITCH_BLACK_EXPOSURE.getOrDefault(player.getUUID(), 0);
     }
 
+    public static int getPanicTriggerTicks() {
+        return PANIC_TRIGGER_TICKS;
+    }
+
+    public static void relievePitchBlackExposure(Player player, int ticks) {
+        if (ticks <= 0) {
+            return;
+        }
+
+        UUID playerId = player.getUUID();
+        int next = Math.max(0, PITCH_BLACK_EXPOSURE.getOrDefault(playerId, 0) - ticks);
+        if (next > 0) {
+            PITCH_BLACK_EXPOSURE.put(playerId, next);
+        } else {
+            PITCH_BLACK_EXPOSURE.remove(playerId);
+        }
+    }
+
+    public static void relievePanic(ServerPlayer player, int ticks) {
+        relieveRecovery(player, PANIC_RECOVERY, ticks, LightMattersMod.PANIC);
+    }
+
+    public static void relieveFatigue(ServerPlayer player, int ticks) {
+        UUID playerId = player.getUUID();
+        if (ticks <= 0) {
+            return;
+        }
+
+        int current = FATIGUE_RECOVERY.getOrDefault(playerId, 0);
+        int next = Math.max(0, current - ticks);
+        if (next > 0) {
+            FATIGUE_RECOVERY.put(playerId, next);
+            int amplifier = next > 80 ? 1 : 0;
+            applyManagedEffect(player, LightMattersMod.FATIGUE, amplifier);
+        } else {
+            FATIGUE_RECOVERY.remove(playerId);
+            removeEffect(player, LightMattersMod.FATIGUE);
+        }
+    }
+
     private static void clearManagedEffects(ServerPlayer player) {
         removeEffect(player, MobEffects.DARKNESS);
         removeEffect(player, LightMattersMod.FATIGUE);
@@ -144,6 +184,23 @@ public final class DarknessSystem {
         int next = Math.max(0, remaining - SAMPLE_INTERVAL_TICKS);
         PANIC_RECOVERY.put(playerId, next);
         applyManagedEffect(player, LightMattersMod.PANIC, 0);
+    }
+
+    private static void relieveRecovery(ServerPlayer player, Map<UUID, Integer> recoveryMap, int ticks, Holder<MobEffect> effect) {
+        if (ticks <= 0) {
+            return;
+        }
+
+        UUID playerId = player.getUUID();
+        int current = recoveryMap.getOrDefault(playerId, 0);
+        int next = Math.max(0, current - ticks);
+        if (next > 0) {
+            recoveryMap.put(playerId, next);
+            applyManagedEffect(player, effect, 0);
+        } else {
+            recoveryMap.remove(playerId);
+            removeEffect(player, effect);
+        }
     }
 
     private static void removeEffect(ServerPlayer player, Holder<MobEffect> effect) {

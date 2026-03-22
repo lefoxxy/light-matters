@@ -6,6 +6,8 @@
   "item.lightmatters.diamond_lantern": "Diamond Lantern",
   "item.lightmatters.netherite_lantern": "Netherite Lantern",
   "item.lightmatters.creative_lantern": "Creative Lantern",
+  "item.lightmatters.calming_tea": "Calming Tea",
+  "item.lightmatters.miners_tonic": "Miner's Tonic",
   "block.lightmatters.iron_lantern_block": "Iron Lantern",
   "block.lightmatters.gold_lantern_block": "Gold Lantern",
   "block.lightmatters.diamond_lantern_block": "Diamond Lantern",
@@ -27,6 +29,9 @@
   "item.lightmatters.lantern.unlit": "Lantern extinguished.",
   "item.lightmatters.lantern.empty": "The lantern is out of fuel.",
   "item.lightmatters.lantern.went_dark": "Your lantern sputters out.",
+  "item.lightmatters.calming_tea.tooltip": "Calms panic and cuts down pitch-black exposure.",
+  "item.lightmatters.miners_tonic.tooltip": "Restores focus and shortens fatigue recovery.",
+  "item.lightmatters.recovery.relief": "You feel the darkness ease.",
   "effect.lightmatters.fatigue": "Fatigue",
   "effect.lightmatters.panic": "Panic"
 }
