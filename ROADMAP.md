@@ -7,6 +7,7 @@ This roadmap is intended to track the next meaningful feature steps for `Light M
 - Refine the compact darkness HUD after live playtesting.
 - Balance `Calming Tea` and `Miner's Tonic` around actual expedition pacing.
 - Continue tuning outdoor darkness across weather, dusk, night, and dawn.
+- Continue polishing lantern presentation within the survival progression only.
 
 ## Near-Term Features
 

@@ -24,14 +24,13 @@ The current prototype focuses on three core ideas:
 
 ## Lantern System
 
-`Light Matters` currently includes six lantern tiers:
+`Light Matters` currently includes five lantern tiers:
 
 - `Wood Lantern`
 - `Iron Lantern`
 - `Gold Lantern`
 - `Diamond Lantern`
 - `Netherite Lantern`
-- `Creative Lantern`
 
 Survival lanterns can be toggled on and off, consume fuel while carried and lit, and can be refueled with coal or charcoal held in the opposite hand. Lantern items can also be placed directly into the world as their matching lantern blocks. Placed lanterns do not consume fuel.
 

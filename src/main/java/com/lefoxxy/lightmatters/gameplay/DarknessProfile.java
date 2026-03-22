@@ -46,8 +46,7 @@ public record DarknessProfile(
             if (state.is(LightMattersMod.IRON_LANTERN_BLOCK.get())
                     || state.is(LightMattersMod.GOLD_LANTERN_BLOCK.get())
                     || state.is(LightMattersMod.DIAMOND_LANTERN_BLOCK.get())
-                    || state.is(LightMattersMod.NETHERITE_LANTERN_BLOCK.get())
-                    || state.is(LightMattersMod.CREATIVE_LANTERN_BLOCK.get())) {
+                    || state.is(LightMattersMod.NETHERITE_LANTERN_BLOCK.get())) {
                 customLanternNearby = true;
                 break;
             }
@@ -69,8 +68,8 @@ public record DarknessProfile(
             return 0;
         }
 
-        float timeOfDay = level.getTimeOfDay(1.0F);
-        float penaltyWeight = getNightWeight(timeOfDay);
+        long dayTicks = Math.floorMod(level.getDayTime(), 24000L);
+        float penaltyWeight = getNightWeight(dayTicks);
 
         if (penaltyWeight <= 0.0F) {
             return 0;
@@ -80,19 +79,23 @@ public record DarknessProfile(
         return Math.round((penaltyWeight * 6.0F) + weatherBonus);
     }
 
-    private static float getNightWeight(float timeOfDay) {
-        if (timeOfDay < 0.18F) {
-            return 1.0F - (timeOfDay / 0.18F);
-        }
-
-        if (timeOfDay < 0.5F) {
+    private static float getNightWeight(long dayTicks) {
+        if (dayTicks < 12000L) {
             return 0.0F;
         }
 
-        if (timeOfDay < 0.68F) {
-            return (timeOfDay - 0.5F) / 0.18F;
+        if (dayTicks < 13500L) {
+            return (dayTicks - 12000L) / 1500.0F;
         }
 
-        return 1.0F;
+        if (dayTicks < 22500L) {
+            return 1.0F;
+        }
+
+        if (dayTicks < 24000L) {
+            return 1.0F - ((dayTicks - 22500L) / 1500.0F);
+        }
+
+        return 0.0F;
     }
 }

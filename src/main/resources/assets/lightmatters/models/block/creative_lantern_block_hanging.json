@@ -1,8 +1,0 @@
-{
-  "parent": "lightmatters:block/tiered_lantern_template_hanging",
-  "textures": {
-    "body": "minecraft:block/sea_lantern",
-    "trim": "minecraft:block/beacon",
-    "particle": "minecraft:block/sea_lantern"
-  }
-}

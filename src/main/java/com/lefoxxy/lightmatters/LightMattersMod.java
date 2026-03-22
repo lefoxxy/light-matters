@@ -51,14 +51,11 @@ public final class LightMattersMod {
             () -> new TieredLanternBlock(ParticleTypes.END_ROD, ParticleTypes.WHITE_SMOKE, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 14)));
     public static final DeferredBlock<LanternBlock> NETHERITE_LANTERN_BLOCK = BLOCKS.register("netherite_lantern_block",
             () -> new TieredLanternBlock(ParticleTypes.SOUL_FIRE_FLAME, ParticleTypes.WHITE_ASH, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 15)));
-    public static final DeferredBlock<LanternBlock> CREATIVE_LANTERN_BLOCK = BLOCKS.register("creative_lantern_block",
-            () -> new TieredLanternBlock(ParticleTypes.END_ROD, ParticleTypes.ELECTRIC_SPARK, BlockBehaviour.Properties.ofFullCopy(Blocks.LANTERN).lightLevel(state -> 15)));
     public static final DeferredItem<Item> WOOD_LANTERN = ITEMS.register(LanternTier.WOOD.itemName(), () -> new FuelLanternItem(LanternTier.WOOD, Blocks.LANTERN));
     public static final DeferredItem<Item> IRON_LANTERN = ITEMS.register(LanternTier.IRON.itemName(), () -> new FuelLanternItem(LanternTier.IRON, IRON_LANTERN_BLOCK.get()));
     public static final DeferredItem<Item> GOLD_LANTERN = ITEMS.register(LanternTier.GOLD.itemName(), () -> new FuelLanternItem(LanternTier.GOLD, GOLD_LANTERN_BLOCK.get()));
     public static final DeferredItem<Item> DIAMOND_LANTERN = ITEMS.register(LanternTier.DIAMOND.itemName(), () -> new FuelLanternItem(LanternTier.DIAMOND, DIAMOND_LANTERN_BLOCK.get()));
     public static final DeferredItem<Item> NETHERITE_LANTERN = ITEMS.register(LanternTier.NETHERITE.itemName(), () -> new FuelLanternItem(LanternTier.NETHERITE, NETHERITE_LANTERN_BLOCK.get()));
-    public static final DeferredItem<Item> CREATIVE_LANTERN = ITEMS.register(LanternTier.CREATIVE.itemName(), () -> new FuelLanternItem(LanternTier.CREATIVE, CREATIVE_LANTERN_BLOCK.get()));
     public static final DeferredItem<Item> CALMING_TEA = ITEMS.register(
             "calming_tea",
             () -> new RecoveryConsumableItem(
@@ -92,7 +89,6 @@ public final class LightMattersMod {
             event.accept(GOLD_LANTERN.get());
             event.accept(DIAMOND_LANTERN.get());
             event.accept(NETHERITE_LANTERN.get());
-            event.accept(CREATIVE_LANTERN.get());
         }
 
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
@@ -100,7 +96,6 @@ public final class LightMattersMod {
             event.accept(GOLD_LANTERN);
             event.accept(DIAMOND_LANTERN);
             event.accept(NETHERITE_LANTERN);
-            event.accept(CREATIVE_LANTERN);
         }
 
         if (event.getTabKey() == CreativeModeTabs.FOOD_AND_DRINKS) {

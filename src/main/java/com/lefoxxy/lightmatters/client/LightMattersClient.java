@@ -50,7 +50,6 @@ public final class LightMattersClient {
             registerLanternProperty(LightMattersMod.GOLD_LANTERN.get());
             registerLanternProperty(LightMattersMod.DIAMOND_LANTERN.get());
             registerLanternProperty(LightMattersMod.NETHERITE_LANTERN.get());
-            registerLanternProperty(LightMattersMod.CREATIVE_LANTERN.get());
         });
     }
 
@@ -195,6 +194,8 @@ public final class LightMattersClient {
             return;
         }
 
+        String stageLabel = getStageLabel(currentStage);
+        String statusLabel = getRecoveryLabel(player);
         boolean showMeter = currentStage != DarknessStage.BRIGHT
                 || (currentProfile.canSeeSky() && currentProfile.outdoorPenalty() > 0)
                 || pressureFill > 0.02F || exposureFill > 0.02F
@@ -206,9 +207,14 @@ public final class LightMattersClient {
         float scale = LightMattersClientConfig.getHudScale();
         int meterWidth = 78;
         int meterHeight = 5;
-        int panelWidth = 94;
-        boolean showExposure = exposureFill > 0.02F || player.hasEffect(LightMattersMod.PANIC);
-        int panelHeight = showExposure ? 32 : 20;
+        boolean showStatus = exposureFill > 0.02F
+                || player.hasEffect(LightMattersMod.PANIC)
+                || player.hasEffect(LightMattersMod.FATIGUE)
+                || (currentProfile.canSeeSky() && currentProfile.outdoorPenalty() > 0);
+        int topRowWidth = 10 + minecraft.font.width("Darkness") + 6 + minecraft.font.width(stageLabel);
+        int bottomRowWidth = showStatus ? 10 + Math.max(meterWidth, minecraft.font.width(statusLabel)) : meterWidth + 10;
+        int panelWidth = Math.max(96, Math.max(topRowWidth, bottomRowWidth) + 6);
+        int panelHeight = showStatus ? 36 : 22;
         int x = getHudX(width, panelWidth, scale);
         int y = getHudY(height, panelHeight, scale);
         int pressureColor = getPressureColor(currentStage);
@@ -217,17 +223,21 @@ public final class LightMattersClient {
         event.getGuiGraphics().pose().translate(x, y, 0.0F);
         event.getGuiGraphics().pose().scale(scale, scale, 1.0F);
 
+        int contentLeft = 6;
+        int contentRight = panelWidth - 6;
         event.getGuiGraphics().fill(0, 0, panelWidth, panelHeight, 0x7A05070A);
-        event.getGuiGraphics().drawString(minecraft.font, Component.literal("Darkness"), 5, 4, 0xE9D7B1, false);
-        event.getGuiGraphics().drawString(minecraft.font, Component.literal(getStageLabel(currentStage)), 58, 4, pressureColor, false);
-        event.getGuiGraphics().fill(5, 12, 5 + meterWidth, 12 + meterHeight, 0xCC1A1E24);
-        event.getGuiGraphics().fill(5, 12, 5 + Mth.floor(meterWidth * pressureFill), 12 + meterHeight, pressureColor);
+        event.getGuiGraphics().drawString(minecraft.font, Component.literal("Darkness"), contentLeft, 4, 0xE9D7B1, false);
+        event.getGuiGraphics().drawString(minecraft.font, Component.literal(stageLabel), contentRight - minecraft.font.width(stageLabel), 4, pressureColor, false);
+        event.getGuiGraphics().fill(contentLeft, 13, contentLeft + meterWidth, 13 + meterHeight, 0xCC1A1E24);
+        event.getGuiGraphics().fill(contentLeft, 13, contentLeft + Mth.floor(meterWidth * pressureFill), 13 + meterHeight, pressureColor);
 
-        if (showExposure) {
-            int exposureY = 19;
-            event.getGuiGraphics().fill(5, exposureY, 5 + meterWidth, exposureY + 4, 0xCC1A1E24);
-            event.getGuiGraphics().fill(5, exposureY, 5 + Mth.floor(meterWidth * exposureFill), exposureY + 4, 0xFFD17A49);
-            event.getGuiGraphics().drawString(minecraft.font, Component.literal(getRecoveryLabel(player)), 5, 25, 0xD8C8AD, false);
+        if (showStatus) {
+            int statusTextY = 22;
+            int statusBarY = 31;
+            float statusFill = getStatusFill(player);
+            event.getGuiGraphics().drawString(minecraft.font, Component.literal(statusLabel), contentLeft, statusTextY, 0xD8C8AD, false);
+            event.getGuiGraphics().fill(contentLeft, statusBarY, contentLeft + meterWidth, statusBarY + 4, 0xCC1A1E24);
+            event.getGuiGraphics().fill(contentLeft, statusBarY, contentLeft + Mth.floor(meterWidth * statusFill), statusBarY + 4, getStatusColor(player));
         }
 
         event.getGuiGraphics().pose().popPose();
@@ -267,12 +277,22 @@ public final class LightMattersClient {
     private static float getPressureFill(DarknessProfile profile) {
         float ambientPressure = Mth.clamp((15.0F - profile.effectiveLight()) / 15.0F, 0.0F, 1.0F);
         float outdoorPressure = profile.canSeeSky()
-                ? Mth.clamp(profile.outdoorPenalty() / 7.0F, 0.0F, 1.0F) * 0.55F
+                ? Mth.clamp(profile.outdoorPenalty() / 7.0F, 0.0F, 1.0F) * 0.85F
                 : 0.0F;
-        return Math.max(ambientPressure, outdoorPressure);
+        float fill = Math.max(ambientPressure, outdoorPressure);
+
+        if (profile.canSeeSky() && profile.outdoorPenalty() > 0) {
+            fill = Math.max(fill, 0.22F);
+        }
+
+        return Math.max(fill, getStageBaseline(profile.stage()));
     }
 
     private static int getPressureColor(DarknessStage stage) {
+        if (stage == DarknessStage.BRIGHT && currentProfile != null && currentProfile.canSeeSky() && currentProfile.outdoorPenalty() > 0) {
+            return 0xC9A65A;
+        }
+
         return switch (stage) {
             case BRIGHT -> 0x8FB37A;
             case GLOOM -> 0xC9A65A;
@@ -310,5 +330,42 @@ public final class LightMattersClient {
         }
 
         return "Recovering";
+    }
+
+    private static float getStatusFill(LocalPlayer player) {
+        if (player.hasEffect(LightMattersMod.PANIC)) {
+            return Math.max(exposureFill, 0.75F);
+        }
+
+        if (player.hasEffect(LightMattersMod.FATIGUE)) {
+            return Math.max(pressureFill, 0.6F);
+        }
+
+        if (currentProfile != null && currentProfile.canSeeSky() && currentProfile.outdoorPenalty() > 0) {
+            return Mth.clamp(currentProfile.outdoorPenalty() / 7.0F, 0.15F, 0.7F);
+        }
+
+        return Math.max(exposureFill, 0.18F);
+    }
+
+    private static int getStatusColor(LocalPlayer player) {
+        if (player.hasEffect(LightMattersMod.PANIC)) {
+            return 0xFFD17A49;
+        }
+
+        if (player.hasEffect(LightMattersMod.FATIGUE)) {
+            return 0xFFB59A72;
+        }
+
+        return 0xFF9B8B73;
+    }
+
+    private static float getStageBaseline(DarknessStage stage) {
+        return switch (stage) {
+            case BRIGHT -> 0.0F;
+            case GLOOM -> 0.3F;
+            case DARK -> 0.58F;
+            case PITCH_BLACK -> 0.88F;
+        };
     }
 }

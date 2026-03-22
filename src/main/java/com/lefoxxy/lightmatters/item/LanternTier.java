@@ -7,8 +7,7 @@ public enum LanternTier {
     IRON("iron_lantern", "Iron Lantern", 12, 140, 4, ChatFormatting.GRAY),
     GOLD("gold_lantern", "Gold Lantern", 13, 200, 4, ChatFormatting.GOLD),
     DIAMOND("diamond_lantern", "Diamond Lantern", 14, 280, 5, ChatFormatting.AQUA),
-    NETHERITE("netherite_lantern", "Netherite Lantern", 15, 360, 6, ChatFormatting.DARK_GRAY),
-    CREATIVE("creative_lantern", "Creative Lantern", 24, 0, 0, ChatFormatting.LIGHT_PURPLE);
+    NETHERITE("netherite_lantern", "Netherite Lantern", 15, 360, 6, ChatFormatting.DARK_GRAY);
 
     private final String itemName;
     private final String displayName;
@@ -59,6 +58,6 @@ public enum LanternTier {
     }
 
     public boolean infiniteFuel() {
-        return this == CREATIVE;
+        return false;
     }
 }
