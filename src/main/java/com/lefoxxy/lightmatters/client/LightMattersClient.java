@@ -195,7 +195,9 @@ public final class LightMattersClient {
             return;
         }
 
-        boolean showMeter = currentStage != DarknessStage.BRIGHT || pressureFill > 0.02F || exposureFill > 0.02F
+        boolean showMeter = currentStage != DarknessStage.BRIGHT
+                || (currentProfile.canSeeSky() && currentProfile.outdoorPenalty() > 0)
+                || pressureFill > 0.02F || exposureFill > 0.02F
                 || player.hasEffect(LightMattersMod.PANIC) || player.hasEffect(LightMattersMod.FATIGUE);
         if (!showMeter) {
             return;
@@ -263,7 +265,11 @@ public final class LightMattersClient {
     }
 
     private static float getPressureFill(DarknessProfile profile) {
-        return Mth.clamp((15.0F - profile.effectiveLight()) / 15.0F, 0.0F, 1.0F);
+        float ambientPressure = Mth.clamp((15.0F - profile.effectiveLight()) / 15.0F, 0.0F, 1.0F);
+        float outdoorPressure = profile.canSeeSky()
+                ? Mth.clamp(profile.outdoorPenalty() / 7.0F, 0.0F, 1.0F) * 0.55F
+                : 0.0F;
+        return Math.max(ambientPressure, outdoorPressure);
     }
 
     private static int getPressureColor(DarknessStage stage) {
@@ -277,7 +283,7 @@ public final class LightMattersClient {
 
     private static String getStageLabel(DarknessStage stage) {
         return switch (stage) {
-            case BRIGHT -> "Stable";
+            case BRIGHT -> currentProfile != null && currentProfile.canSeeSky() && currentProfile.outdoorPenalty() > 0 ? "Exposed" : "Stable";
             case GLOOM -> "Gloom";
             case DARK -> "Strained";
             case PITCH_BLACK -> "Breaking";
