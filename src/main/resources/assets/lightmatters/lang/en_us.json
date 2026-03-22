@@ -1,3 +1,22 @@
 {
-  "modmenu.nameTranslation.lightmatters": "Light Matters"
+  "modmenu.nameTranslation.lightmatters": "Light Matters",
+  "item.lightmatters.wood_lantern": "Wood Lantern",
+  "item.lightmatters.iron_lantern": "Iron Lantern",
+  "item.lightmatters.gold_lantern": "Gold Lantern",
+  "item.lightmatters.diamond_lantern": "Diamond Lantern",
+  "item.lightmatters.netherite_lantern": "Netherite Lantern",
+  "item.lightmatters.lantern.state.lit": "Lit",
+  "item.lightmatters.lantern.state.unlit": "Unlit",
+  "item.lightmatters.lantern.status": "Status: %s",
+  "item.lightmatters.lantern.fuel": "Fuel: %s",
+  "item.lightmatters.lantern.tier": "Tier: %s",
+  "item.lightmatters.lantern.brightness": "Brightness: %s",
+  "item.lightmatters.lantern.efficiency": "Coal burn time: %s",
+  "item.lightmatters.lantern.controls": "Right-click to toggle the lantern.",
+  "item.lightmatters.lantern.refuel_hint": "Use while coal or charcoal is in your other hand to refuel it.",
+  "item.lightmatters.lantern.refueled": "Lantern refueled to %s.",
+  "item.lightmatters.lantern.lit": "Lantern lit.",
+  "item.lightmatters.lantern.unlit": "Lantern extinguished.",
+  "item.lightmatters.lantern.empty": "The lantern is out of fuel.",
+  "item.lightmatters.lantern.went_dark": "Your lantern sputters out."
 }

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:gold_ingot"
+  },
+  "base": {
+    "item": "lightmatters:iron_lantern"
+  },
+  "result": {
+    "id": "lightmatters:gold_lantern"
+  },
+  "template": {
+    "item": "minecraft:lantern"
+  }
+}

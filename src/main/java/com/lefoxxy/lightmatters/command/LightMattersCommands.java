@@ -40,6 +40,7 @@ public final class LightMattersCommands {
                         + ", effective=" + profile.effectiveLight()
                         + ", block=" + profile.blockLight()
                         + ", sky=" + profile.skyLight()
+                        + ", personal=" + profile.personalLight()
                         + ", canSeeSky=" + profile.canSeeSky()
                         + ", tier=" + profile.ambientTier().name()
                         + ", pitchBlackExposureTicks=" + exposureTicks
