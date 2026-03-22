@@ -67,6 +67,15 @@ public final class LightMattersClient {
             return;
         }
 
+        if (player.isCreative() || player.isSpectator()) {
+            currentProfile = null;
+            currentStage = DarknessStage.BRIGHT;
+            pressureFill = 0.0F;
+            exposureFill = 0.0F;
+            clientPitchBlackExposure = 0;
+            return;
+        }
+
         currentProfile = DarknessProfile.sample(player);
         currentStage = currentProfile.stage();
         if (currentStage.isSevere()) {
@@ -83,8 +92,10 @@ public final class LightMattersClient {
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
-        if (player == null) {
+        if (player == null || player.isCreative() || player.isSpectator()) {
             panicPulse = 0.0F;
+            panicHeartbeatCooldown = 8;
+            fatigueBreathCooldown = 20;
             return;
         }
 
@@ -123,7 +134,7 @@ public final class LightMattersClient {
     public static void onCameraAngles(ViewportEvent.ComputeCameraAngles event) {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
-        if (player == null || !player.hasEffect(LightMattersMod.PANIC)) {
+        if (player == null || player.isCreative() || player.isSpectator() || !player.hasEffect(LightMattersMod.PANIC)) {
             return;
         }
 
@@ -137,7 +148,7 @@ public final class LightMattersClient {
     public static void onComputeFov(ViewportEvent.ComputeFov event) {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
-        if (player == null) {
+        if (player == null || player.isCreative() || player.isSpectator()) {
             return;
         }
 
@@ -154,7 +165,7 @@ public final class LightMattersClient {
     public static void onRenderGui(RenderGuiEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
-        if (minecraft.options.hideGui || player == null) {
+        if (minecraft.options.hideGui || player == null || player.isCreative() || player.isSpectator()) {
             return;
         }
 

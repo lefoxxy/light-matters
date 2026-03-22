@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/template_lantern",
+  "parent": "lightmatters:block/tiered_lantern_template",
   "textures": {
-    "lantern": "minecraft:block/lantern"
+    "body": "minecraft:block/lantern",
+    "trim": "minecraft:block/gold_block",
+    "particle": "minecraft:block/lantern"
   }
 }
